@@ -2,6 +2,9 @@ package com.docuten.demo.controller;
 
 import com.docuten.demo.DTO.KeysDto;
 import com.docuten.demo.DTO.UserDto;
+import com.docuten.demo.exceptions.CryptographyException;
+import com.docuten.demo.exceptions.KeysNotFoundException;
+import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.Keys;
 import com.docuten.demo.service.KeysService;
 import jakarta.validation.Valid;
@@ -24,18 +27,10 @@ public class KeysController {
             Keys keys = keysService.create(keysDto);
 
            return ResponseEntity.ok(keys);
-        } catch (Exception e) { // TODO: handle exceptions correctly (we could get an error with the encryption process)
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
-        }
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<?> get(@PathVariable UUID userId) {
-        try {
-            Keys keys = keysService.get(userId);
-
-            return ResponseEntity.ok(keys);
-        } catch (Exception e) { // TODO: handle exceptions correctly (we could get an error with the encryption process)
+        } catch (CryptographyException e) {
+            // TODO: log the e.message
+            return new ResponseEntity<>("Error: we could not create keys. Please, try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -46,7 +41,7 @@ public class KeysController {
             keysService.delete(userId);
 
             return new ResponseEntity<>("", HttpStatus.OK);
-        } catch (Exception e) { // TODO: handle exceptions correctly (we could get an error with the encryption process)
+        } catch (KeysNotFoundException | UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
