@@ -76,10 +76,14 @@ public class KeysService {
     }
 
     public Keys create(KeysDto keysDto) throws Exception {
-        return repository.save(createKeys(keysDto));
+        Keys keys = repository.save(createKeys(keysDto));
+
+        String decryptedPrivateKey = decrypt(keys.getPrivateKey());
+
+        keys.setPrivateKey(decryptedPrivateKey);
+
+        return keys;
     }
-
-
 
     public Keys get(UUID userId) throws Exception {
         Keys keys = repository.findById(userId).orElseThrow();
