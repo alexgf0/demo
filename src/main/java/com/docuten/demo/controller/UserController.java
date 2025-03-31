@@ -1,6 +1,8 @@
 package com.docuten.demo.controller;
 
 import com.docuten.demo.DTO.UserDto;
+import com.docuten.demo.exceptions.UserIdNotProvidedException;
+import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.User;
 import com.docuten.demo.service.UserService;
 import jakarta.validation.Valid;
@@ -30,7 +32,7 @@ public class UserController {
         try {
             User user = userService.get(id);
             return ResponseEntity.ok(user);
-        } catch (Exception e) {
+        } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -41,7 +43,9 @@ public class UserController {
         try {
             User user = userService.update(userDto);
             return ResponseEntity.ok(user);
-        } catch (Exception e) {
+        } catch (UserIdNotProvidedException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -49,10 +53,11 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable UUID id) {
         // TODO: check for associated keys and delete them if needed (or mark as deleted)
+        
         try {
             userService.delete(id);
             return new ResponseEntity<>("", HttpStatus.OK);
-        } catch (Exception e) {
+        } catch (UserNotFoundException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

@@ -1,6 +1,8 @@
 package com.docuten.demo.service;
 
 import com.docuten.demo.DTO.UserDto;
+import com.docuten.demo.exceptions.UserIdNotProvidedException;
+import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.User;
 import com.docuten.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,30 +27,29 @@ public class UserService {
         );
     }
 
-    public User create(UserDto userDto) { // change input param to a DTO
-        System.out.println("Saving user: "+ userDto);
+    public User create(UserDto userDto) {
         User user = createUser(userDto);
         repository.save(user);
 
         return user;
     }
 
-    public User get(UUID id) throws Exception { // TODO: create custom exceptions
-        return repository.findById(id).orElseThrow();
+    public User get(UUID id) throws UserNotFoundException {
+        return repository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
-    public User update(UserDto userDto) throws Exception { // TODO: create custom exceptions
+    public User update(UserDto userDto) throws UserIdNotProvidedException, UserNotFoundException {
         if (userDto.getId() == null) {
-            throw new Exception();
+            throw new UserIdNotProvidedException();
         }
-        repository.findById(userDto.getId()).orElseThrow();
+        repository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 
         return repository.save(create(userDto));
     }
 
-    public void delete(UUID id) throws Exception { // TODO: use custom exception
+    public void delete(UUID id) throws UserNotFoundException {
         if (!repository.existsById(id)) {
-            throw new Exception();
+            throw new UserNotFoundException();
         }
         repository.deleteById(id);
     }
