@@ -8,6 +8,8 @@ import com.docuten.demo.model.User;
 import com.docuten.demo.service.KeysService;
 import com.docuten.demo.service.UserService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,8 @@ public class UserController {
     @Autowired
     private KeysService keysService;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @PostMapping("/")
     public ResponseEntity<?> create(@Valid @RequestBody UserDto userDto) {
         User user = userService.create(userDto);
@@ -38,6 +42,7 @@ public class UserController {
             User user = userService.get(id);
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e) {
+            logger.debug("Tried to get not found user with userId: " + id + " - " + e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -49,8 +54,10 @@ public class UserController {
             User user = userService.update(userDto);
             return ResponseEntity.ok(user);
         } catch (UserIdNotProvidedException e) {
+            logger.debug("Tried to update user without providing userId: " + e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (UserNotFoundException e) {
+            logger.debug("Tried to update not found user with userId: " + userDto.getId() + " - " + e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }
@@ -60,13 +67,14 @@ public class UserController {
         try {
             keysService.delete(id); // delete associated keys if they exist
         } catch (KeysNotFoundException e) {
-           // TODO: log it
+            logger.debug("Trying to delete user with id: " + id + " with no keys: " + e);
         }
 
         try {
             userService.delete(id);
             return new ResponseEntity<>("", HttpStatus.OK);
         } catch (UserNotFoundException e) {
+            logger.debug("Trying to delete user with id: " + id + "- :" + e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         }
     }

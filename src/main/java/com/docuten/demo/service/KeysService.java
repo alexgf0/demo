@@ -1,12 +1,15 @@
 package com.docuten.demo.service;
 
 import com.docuten.demo.DTO.KeysDto;
+import com.docuten.demo.controller.KeysController;
 import com.docuten.demo.exceptions.CryptographyException;
 import com.docuten.demo.exceptions.KeysNotFoundException;
 import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.Keys;
 import com.docuten.demo.repository.KeysRepository;
 import com.docuten.demo.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,8 @@ public class KeysService {
     private final KeysRepository repository;
 
     private final UserRepository userRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(KeysService.class);
 
     @Value("${demo.key}")
     private String secretKeyStr;
@@ -44,6 +49,7 @@ public class KeysService {
             key = Arrays.copyOf(key, 16);
             return new SecretKeySpec(key, "AES");
         } catch (NoSuchAlgorithmException e) {
+            logger.error(e.getMessage());
             throw new CryptographyException(e.getMessage());
         }
     }
@@ -58,6 +64,7 @@ public class KeysService {
             return Base64.getEncoder().encodeToString(encryptedBytes);
         } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException | BadPaddingException |
                  InvalidKeyException e) {
+            logger.error(e.getMessage());
             throw new CryptographyException(e.getMessage());
         }
     }
@@ -72,6 +79,7 @@ public class KeysService {
             return new String(decryptedBytes);
         } catch (NoSuchPaddingException | IllegalBlockSizeException | NoSuchAlgorithmException | BadPaddingException |
                  InvalidKeyException e) {
+            logger.error(e.getMessage());
             throw new CryptographyException(e.getMessage());
         }
     }
@@ -92,6 +100,7 @@ public class KeysService {
 
             return new Keys(keysDto.getUserId(), publicKey, encryptedPrivate);
         } catch (NoSuchAlgorithmException e) {
+            logger.error(e.getMessage());
             throw new CryptographyException(e.getMessage());
         }
     }

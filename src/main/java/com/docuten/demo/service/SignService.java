@@ -1,11 +1,14 @@
 package com.docuten.demo.service;
 
 import com.docuten.demo.DTO.SignDto;
+import com.docuten.demo.controller.UserController;
 import com.docuten.demo.exceptions.CryptographyException;
 import com.docuten.demo.exceptions.KeysNotFoundException;
 import com.docuten.demo.exceptions.SignatureNotProvidedException;
 import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,8 @@ public class SignService {
 
     KeyFactory keyFactory;
 
+    private static final Logger logger = LoggerFactory.getLogger(SignService.class);
+
     public SignService() throws NoSuchAlgorithmException {
         keyFactory = KeyFactory.getInstance("RSA");
     }
@@ -32,6 +37,7 @@ public class SignService {
         try {
             return keyFactory.generatePrivate(spec);
         } catch (InvalidKeySpecException e) {
+            logger.error(e.getMessage());
             throw new CryptographyException(e.getMessage());
         }
     }
@@ -42,6 +48,7 @@ public class SignService {
         try {
             return keyFactory.generatePublic(spec);
         } catch (InvalidKeySpecException e) {
+            logger.error(e.getMessage());
             throw new CryptographyException(e.getMessage());
         }
     }
@@ -54,6 +61,7 @@ public class SignService {
 
             return signature.sign();
         } catch (InvalidKeyException | NoSuchAlgorithmException | SignatureException e) {
+            logger.error(e.getMessage());
             throw new CryptographyException(e.getMessage());
         }
     }
@@ -89,6 +97,7 @@ public class SignService {
 
             return signature.verify(signatureBytes);
         } catch (InvalidKeyException | NoSuchAlgorithmException | SignatureException e) {
+            logger.error(e.getMessage());
             throw new CryptographyException(e.getMessage());
         }
     }
