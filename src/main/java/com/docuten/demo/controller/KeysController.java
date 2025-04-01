@@ -1,7 +1,6 @@
 package com.docuten.demo.controller;
 
 import com.docuten.demo.DTO.KeysDto;
-import com.docuten.demo.DTO.UserDto;
 import com.docuten.demo.exceptions.CryptographyException;
 import com.docuten.demo.exceptions.KeysNotFoundException;
 import com.docuten.demo.exceptions.UserNotFoundException;

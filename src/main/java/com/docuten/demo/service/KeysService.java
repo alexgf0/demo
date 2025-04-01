@@ -5,7 +5,6 @@ import com.docuten.demo.exceptions.CryptographyException;
 import com.docuten.demo.exceptions.KeysNotFoundException;
 import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.Keys;
-import com.docuten.demo.model.User;
 import com.docuten.demo.repository.KeysRepository;
 import com.docuten.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

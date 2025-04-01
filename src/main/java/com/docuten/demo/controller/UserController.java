@@ -1,9 +1,11 @@
 package com.docuten.demo.controller;
 
 import com.docuten.demo.DTO.UserDto;
+import com.docuten.demo.exceptions.KeysNotFoundException;
 import com.docuten.demo.exceptions.UserIdNotProvidedException;
 import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.User;
+import com.docuten.demo.service.KeysService;
 import com.docuten.demo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private KeysService keysService;
 
     @PostMapping("/")
     public ResponseEntity<?> create(@Valid @RequestBody UserDto userDto) {
@@ -52,8 +57,12 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable UUID id) {
-        // TODO: check for associated keys and delete them if needed (or mark as deleted)
-        
+        try {
+            keysService.delete(id); // delete associated keys if they exist
+        } catch (KeysNotFoundException e) {
+           // TODO: log it
+        }
+
         try {
             userService.delete(id);
             return new ResponseEntity<>("", HttpStatus.OK);
