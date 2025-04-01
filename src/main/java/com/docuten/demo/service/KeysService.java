@@ -1,7 +1,6 @@
 package com.docuten.demo.service;
 
 import com.docuten.demo.DTO.KeysDto;
-import com.docuten.demo.controller.KeysController;
 import com.docuten.demo.exceptions.CryptographyException;
 import com.docuten.demo.exceptions.KeysNotFoundException;
 import com.docuten.demo.exceptions.UserNotFoundException;
@@ -39,7 +38,7 @@ public class KeysService {
         this.userRepository = userRepository;
     }
 
-    public static SecretKey getKeyFromString(String keyString) throws CryptographyException {
+    private SecretKey getKeyFromString(String keyString) throws CryptographyException {
         byte[] key = keyString.getBytes(StandardCharsets.UTF_8);
         // Hash the key using SHA-256 to ensure it's 128/192/256 bits
         try {
@@ -54,7 +53,7 @@ public class KeysService {
         }
     }
 
-    private String encrypt(String data) throws CryptographyException {
+    public String encrypt(String data) throws CryptographyException {
         try {
             SecretKey secretKey = getKeyFromString(secretKeyStr);
             Cipher cipher = Cipher.getInstance("AES");
@@ -69,7 +68,7 @@ public class KeysService {
         }
     }
 
-    public String decrypt(String encryptedData) throws CryptographyException {
+    private String decrypt(String encryptedData) throws CryptographyException {
         try {
             SecretKey secretKey = getKeyFromString(secretKeyStr);
             Cipher cipher = Cipher.getInstance("AES");
@@ -105,7 +104,7 @@ public class KeysService {
         }
     }
 
-    public Keys create(KeysDto keysDto) throws CryptographyException, UserNotFoundException  {
+    public Keys create(KeysDto keysDto) throws CryptographyException, UserNotFoundException {
         if (!userRepository.existsById(keysDto.getUserId())) {
             throw new UserNotFoundException();
         }
