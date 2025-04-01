@@ -1,4 +1,6 @@
 # Ejecución del Proyecto
+- Se requiere Java 17 o superior
+
 Tras clonar el repositorio y entrar en el directorio raíz:
 ```bash
 git clone git@github.com:alexgf0/demo.git
