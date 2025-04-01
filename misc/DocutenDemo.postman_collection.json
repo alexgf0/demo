@@ -1,0 +1,143 @@
+{
+	"info": {
+		"_postman_id": "755ef9f9-dfb5-48d1-9462-8f22933a779c",
+		"name": "DocutenDemo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "43612420",
+		"_collection_link": "https://planetary-zodiac-7990112.postman.co/workspace/Alejandro-Garc%C3%ADa's-Workspace~e1e46d9d-7e17-40f9-8b2a-8a2dec6ef353/collection/43612420-755ef9f9-dfb5-48d1-9462-8f22933a779c?action=share&source=collection_link&creator=43612420"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Fernando\",\n    \"firstSurname\": \"Alonso\",\n    \"secondSurname\": \"Diaz\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/user/"
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "http://localhost:8080/api/user/33636833-bd51-4751-999d-438540a2a94f"
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"33636833-bd51-4751-999d-438540a2a94f\",\n    \"name\": \"Fernando\",\n    \"firstSurname\": \"Alonso\",\n    \"secondSurname\": \"Pérez\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/user/"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/api/user/33636833-bd51-4751-999d-438540a2a94f"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Keys",
+			"item": [
+				{
+					"name": "Create Keys",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"33636833-bd51-4751-999d-438540a2a94f\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/keys/"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Keys",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": "http://localhost:8080/api/keys/33636833-bd51-4751-999d-438540a2a94f"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Sign",
+			"item": [
+				{
+					"name": "Sign Document",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"33636833-bd51-4751-999d-438540a2a94f\",\n    \"documentBase64\": \"VGVzdCBkb2N1bWVudCBjb250ZW50\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/sign/create/"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Signature",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"userId\": \"33636833-bd51-4751-999d-438540a2a94f\",\n    \"documentSignature\": \"B9AS+6Z6sfekNbsfubKYQlyGb/g5j3LphrdyVSxYyhTfbQUq5iVrSiV7qyR3W2zF7OyzHrGmIwHj6xvjWrWgljUY7PYXQTIZRE37agcatI7GWmKqSDr80fCyimpOtmJkTQtxVcfJUZeMgdFLhK0wg66NQYbe0JjMtS6sBrV6efHet9vg9fQPx+kaKYFMTkmpFJjh9reojlko6zlhqtxGyoXHKL+6zPQJH5T0BCARHdNAOw+UKeIyt7wQY84gV7vq+Dyk8mnmj7vee4h0y7FWooGpaGpOt5z/jTLGQgpGngiEVFNYSjSfxSXcy8UX1/Ti7XOcqdhtnmf2wxQ+UjFfLA==\",\n    \"documentBase64\": \"VGVzdCBkb2N1bWVudCBjb250ZW50\"\n\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "http://localhost:8080/api/sign/verify/"
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
