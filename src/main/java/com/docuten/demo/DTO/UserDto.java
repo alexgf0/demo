@@ -1,16 +1,14 @@
 package com.docuten.demo.DTO;
 
-import jakarta.validation.constraints.NotBlank;
+import com.docuten.demo.exceptions.ArgumentRequiredException;
 
 import java.util.UUID;
 
 public class UserDto {
     private UUID id;
 
-    @NotBlank(message = "Name is required")
     private String name;
 
-    @NotBlank(message = "First surname is required")
     private String firstSurname;
 
     // optional
@@ -18,6 +16,16 @@ public class UserDto {
 
     public UUID getId() {
         return id;
+    }
+
+    public void checkRequiredFields() throws ArgumentRequiredException {
+        if (name == null) {
+            throw new ArgumentRequiredException("name is a required field");
+        }
+
+        if (firstSurname == null) {
+            throw new ArgumentRequiredException("firstSurname is a required field");
+        }
     }
 
     public void setId(UUID id) {

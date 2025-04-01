@@ -1,9 +1,9 @@
 package com.docuten.demo.unitTests;
 
 import com.docuten.demo.DTO.SignDto;
+import com.docuten.demo.exceptions.ArgumentRequiredException;
 import com.docuten.demo.exceptions.CryptographyException;
 import com.docuten.demo.exceptions.KeysNotFoundException;
-import com.docuten.demo.exceptions.SignatureNotProvidedException;
 import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.Keys;
 import com.docuten.demo.service.KeysService;
@@ -123,14 +123,6 @@ public class SignServiceUnitTest {
                 "Exception should mention signature length issue");
 
         verify(keysService, times(1)).get(userId);
-    }
-
-    @Test
-    public void testVerifySignature_SignatureNotProvided() {
-        signDto.setDocumentSignature(null);
-
-        assertThrows(SignatureNotProvidedException.class, () -> signService.verifySignature(signDto));
-        verify(keysService, never()).get(signDto.getUserId());
     }
 
     @Test

@@ -1,12 +1,18 @@
 package com.docuten.demo.DTO;
 
-import jakarta.validation.constraints.NotNull;
+import com.docuten.demo.exceptions.ArgumentRequiredException;
 
 import java.util.UUID;
 
 public class KeysDto {
-    @NotNull(message = "User id is required")
     private UUID userId;
+
+    public void checkRequiredFields() throws ArgumentRequiredException {
+        if (userId == null) {
+            throw new ArgumentRequiredException("field userId is required");
+        }
+    }
+
 
     public UUID getUserId() {
         return userId;

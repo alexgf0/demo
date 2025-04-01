@@ -1,16 +1,30 @@
 package com.docuten.demo.DTO;
 
-import jakarta.validation.constraints.NotBlank;
+import com.docuten.demo.exceptions.ArgumentRequiredException;
 
 import java.util.UUID;
 
 public class SignDto {
-    @NotBlank(message = "Document content is required")
     private String documentBase64;
 
     private UUID userId;
 
     private String documentSignature;
+
+    public void checkRequiredFields(boolean verifying) throws ArgumentRequiredException {
+        if (documentBase64 == null) {
+           throw new ArgumentRequiredException("the field documentBase64 is required");
+        }
+
+        if (userId == null) {
+            throw new ArgumentRequiredException("the field userId is required");
+        }
+
+        if (verifying && documentSignature == null) {
+
+            throw new ArgumentRequiredException("the field documentSignature is required");
+        }
+    }
 
     public String getDocumentBase64() {
         return documentBase64;

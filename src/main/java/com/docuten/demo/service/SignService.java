@@ -1,10 +1,7 @@
 package com.docuten.demo.service;
 
 import com.docuten.demo.DTO.SignDto;
-import com.docuten.demo.exceptions.CryptographyException;
-import com.docuten.demo.exceptions.KeysNotFoundException;
-import com.docuten.demo.exceptions.SignatureNotProvidedException;
-import com.docuten.demo.exceptions.UserNotFoundException;
+import com.docuten.demo.exceptions.*;
 import com.docuten.demo.model.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,29 +62,46 @@ public class SignService {
         }
     }
 
-    public String signDocument(SignDto signDto) throws UserNotFoundException, KeysNotFoundException, CryptographyException {
+    public String signDocument(SignDto signDto)
+            throws UserNotFoundException, KeysNotFoundException, CryptographyException, InvalidDocumentException
+    {
         Keys keys = keysService.get(signDto.getUserId());
         PrivateKey privateKey = getPrivateKey(keys);
 
-        byte[] document = Base64.getDecoder().decode(signDto.getDocumentBase64());
+        byte[] documentBytes;
 
-        byte[] signature = signDocument(privateKey, document);
+        try {
+            documentBytes = Base64.getDecoder().decode(signDto.getDocumentBase64());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidDocumentException("Invalid documentBase64: " + e.getMessage());
+        }
+
+        byte[] signature = signDocument(privateKey, documentBytes);
 
         return Base64.getEncoder().encodeToString(signature);
     }
 
-    public boolean verifySignature(SignDto signDto)
-            throws SignatureNotProvidedException, CryptographyException, UserNotFoundException, KeysNotFoundException
+    public boolean verifySignature(SignDto signDto) throws CryptographyException, UserNotFoundException,
+            KeysNotFoundException, InvalidSignatureException, InvalidDocumentException
     {
-        if (signDto.getDocumentSignature() == null) {
-            throw new SignatureNotProvidedException();
-        }
-
         Keys keys = keysService.get(signDto.getUserId());
         PublicKey publicKey = getPublicKey(keys);
 
-        byte[] documentBytes = Base64.getDecoder().decode(signDto.getDocumentBase64());
-        byte[] signatureBytes = Base64.getDecoder().decode(signDto.getDocumentSignature());
+        byte[] documentBytes;
+        byte[] signatureBytes;
+
+        try {
+            documentBytes = Base64.getDecoder().decode(signDto.getDocumentBase64());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidDocumentException("Invalid documentBase64: " + e.getMessage());
+        }
+
+        try {
+           signatureBytes = Base64.getDecoder().decode(signDto.getDocumentSignature());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidSignatureException("Invalid Signature:documentSignature: " + e.getMessage());
+        }
+
 
         try {
             Signature signature = Signature.getInstance("SHA256withRSA");
@@ -98,6 +112,8 @@ public class SignService {
         } catch (InvalidKeyException | NoSuchAlgorithmException | SignatureException e) {
             logger.error(e.getMessage());
             throw new CryptographyException(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidSignatureException(e.getMessage());
         }
     }
 }

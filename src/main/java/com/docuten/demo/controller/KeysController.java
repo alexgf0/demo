@@ -1,6 +1,8 @@
 package com.docuten.demo.controller;
 
+import com.docuten.demo.DTO.ErrorDto;
 import com.docuten.demo.DTO.KeysDto;
+import com.docuten.demo.exceptions.ArgumentRequiredException;
 import com.docuten.demo.exceptions.CryptographyException;
 import com.docuten.demo.exceptions.KeysNotFoundException;
 import com.docuten.demo.exceptions.UserNotFoundException;
@@ -25,17 +27,22 @@ public class KeysController {
     private static final Logger logger = LoggerFactory.getLogger(KeysController.class);
 
     @PostMapping("/")
-    public ResponseEntity<?> create(@Valid @RequestBody KeysDto keysDto) {
+    public ResponseEntity<?> create(@RequestBody KeysDto keysDto) {
         try {
+            keysDto.checkRequiredFields();
             Keys keys = keysService.create(keysDto);
 
            return ResponseEntity.ok(keys);
+        } catch (ArgumentRequiredException e) {
+            logger.error("Tried to create keys without required fields : " + e);
+            return new ResponseEntity<>(new ErrorDto(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (CryptographyException e) {
             logger.error("Tried to create keys with CryptographyException: " + e);
-            return new ResponseEntity<>("Error: we could not create keys. Please, try again later.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new ErrorDto(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Error: we could not create keys. Please, try again later."), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (UserNotFoundException e) {
             logger.debug("Tried to create keys for non-existing user " + keysDto.getUserId() + ": " + e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorDto(HttpStatus.NOT_FOUND, e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -47,7 +54,7 @@ public class KeysController {
             return new ResponseEntity<>("", HttpStatus.OK);
         } catch (KeysNotFoundException | UserNotFoundException e) {
             logger.debug("Tried to delete keys with Exception: " + e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorDto(HttpStatus.NOT_FOUND, e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.docuten.demo.controller;
 
+import com.docuten.demo.DTO.ErrorDto;
 import com.docuten.demo.DTO.UserDto;
+import com.docuten.demo.exceptions.ArgumentRequiredException;
 import com.docuten.demo.exceptions.KeysNotFoundException;
 import com.docuten.demo.exceptions.UserIdNotProvidedException;
 import com.docuten.demo.exceptions.UserNotFoundException;
@@ -30,7 +32,14 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/")
-    public ResponseEntity<?> create(@Valid @RequestBody UserDto userDto) {
+    public ResponseEntity<?> create(@RequestBody UserDto userDto) {
+        try {
+            userDto.checkRequiredFields();
+        } catch (ArgumentRequiredException e) {
+            logger.debug("Tried to create user without required values: " + e.getMessage());
+            return new ResponseEntity<>(new ErrorDto(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+
         User user = userService.create(userDto);
 
         return ResponseEntity.ok(user);
@@ -43,7 +52,7 @@ public class UserController {
             return ResponseEntity.ok(user);
         } catch (UserNotFoundException e) {
             logger.debug("Tried to get not found user with userId: " + id + " - " + e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorDto(HttpStatus.NOT_FOUND, e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -51,14 +60,18 @@ public class UserController {
     @PutMapping("/")
     public ResponseEntity<?> update(@Valid @RequestBody UserDto userDto) {
         try {
+            userDto.checkRequiredFields();
             User user = userService.update(userDto);
             return ResponseEntity.ok(user);
+        } catch (ArgumentRequiredException e) {
+            logger.debug("Tried to update user without required values: " + e);
+            return new ResponseEntity<>(new ErrorDto(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (UserIdNotProvidedException e) {
             logger.debug("Tried to update user without providing userId: " + e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ErrorDto(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (UserNotFoundException e) {
             logger.debug("Tried to update not found user with userId: " + userDto.getId() + " - " + e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorDto(HttpStatus.NOT_FOUND, e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 
@@ -75,7 +88,7 @@ public class UserController {
             return new ResponseEntity<>("", HttpStatus.OK);
         } catch (UserNotFoundException e) {
             logger.debug("Trying to delete user with id: " + id + "- :" + e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new ErrorDto(HttpStatus.NOT_FOUND, e.getMessage()), HttpStatus.NOT_FOUND);
         }
     }
 
