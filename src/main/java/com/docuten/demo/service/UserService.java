@@ -44,7 +44,7 @@ public class UserService {
         }
         repository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 
-        return repository.save(create(userDto));
+        return repository.save(new User(userDto.getId(), userDto.getName(), userDto.getFirstSurname(), userDto.getSecondSurname()));
     }
 
     public void delete(UUID id) throws UserNotFoundException {
