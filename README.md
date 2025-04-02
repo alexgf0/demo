@@ -23,10 +23,10 @@ mvn test
 ```
 
 # Definición de la API
-A continuación veremos el uso de los diversos `endpoints` mediante peticiones `curl` para cada `endpoint`.
+A continuación veremos el uso de los diversos `endpoints` mediante peticiones `curl`.
 
 Adicionalmente en el directorio [misc](./misc), se incluye el fichero [DocutenDemo.postman_collection](./misc/DocutenDemo.postman_collection.json) para importar las peticiones más cómodamente a la herramienta `Postman`.
-Sin embargo, también será necesario el cambio o propagación del `id` obtenido en la creación del usuario, a las diversas peticiones.
+Sin embargo, también será necesario el cambio o propagación del `id` de usuario, a las diversas peticiones.
 
 
 ## Usuario
@@ -51,7 +51,7 @@ ejemplo de valor de retorno:
   "secondSurname": "Díaz"
 }
 ```
-necesitaremos usar el **id de usuario** en las siguientes peticiones.
+necesitaremos usar el **id de usuario** generado en las siguientes peticiones.
 
 ### Leer / Obtener (Usuario)
 ```curl
@@ -71,7 +71,7 @@ curl --location --request PUT 'http://localhost:8080/api/user/' \
     "secondSurname": "Pérez"
 }'
 ```
-una vez deberemos rellenar el campo `id` acorde al valor obtenido.
+una vez más, deberemos rellenar el campo `id` acorde al valor obtenido.
 
 ### Borrar (Usuario)
 Esta operación también borra las claves asignadas al usuario si estas existen.
@@ -110,9 +110,13 @@ curl --location 'http://localhost:8080/api/sign/create/' \
 ```
 el valor del campo `userId` deberá corresponderse con el `id` de un usuario existente que tenga claves generadas.
 
-Si se realiza correctamente la petición a este `endpoint` recibiremos la firma en formato de String:
-```text
-F9GtCIMfmG89N6yR4316T3P4whfgBOQyYemTSWxx7fnoFNnlE58S9SCLzc0mPRhdeDz8rTJKVNk3l+KZLdgaO74IiRshtY+w3Pg6VhB3ddMLpUZJrH243hL4CgWy1GzzNaTeVpqEbt/4pHZJKQ59RJDvff0lbGhd0QKG9sPnrov4XTNf4CK5Wb3HmtsMhGw9Ob0BtXclJLW/qI9AeHxyUZ8SVAyAq+TQe6VfYl3oeCFGK/yNdH/VrbQUMrvhvuKb8DHbAtFxXqkTHQ7hGdsYiXI8/LjZPFZU3haef1n8Fv+h5oo9/0iNB7mSHfouF/4vAdMsqgt301bABZ5DOCGj4Q==
+Si se realiza correctamente la petición a este `endpoint` recibiremos la firma dentro de un formato JSON:
+```json
+{
+  "userId": "c7a081a5-0660-4752-8455-bb9d806d3a8c",
+  "documentBase64": "VGVzdCBkb2N1bWVudCBjb250ZW50",
+  "signature": "SWgkRzksmmUAIeyGE7H0KAC/3+TH9Y+mavXfxR+C0tO6GXtbSUFbBDf9kgGoprI+hWd/4CToQAkOEORZPJI6HqPzO3GupOs3H9MLflmep6WU1jAmIJNpa4/5K++XlfeUP6vIdcCI+huVNspK/9TCadeS2WeG7FGLwnMFrlV8kHoCtCG3f+vcEvhwav5eut7umcfOZmFsENFq1SvSvgdHm4k9Hz5u1pLW3ncU1b1wTJd2l5EerZK5n19m8dvUIBLOfTI9HItkujEuAm2l1k95nrbkvlDtBxQoTKd671szmRvUqDIWmJyOMmJ1UPsOnFEVehV7KhRy1OhiwiwH/5Jvpg=="
+}
 ```
 
 ### Verificar firma
@@ -127,5 +131,14 @@ curl --location 'http://localhost:8080/api/sign/verify/' \
 ```
 Para el correcto funcionamiento del endpoint, deberemos introducir el `userId` del usuario que firmó el documento, la firma de dicho documento en `documentSignature` y el documento original en `documentBase64`.
 
+Ejemplo de respuesta:
+```json
+{
+    "userId": "c7a081a5-0660-4752-8455-bb9d806d3a8c",
+    "documentBase64": "VGVzdCBkb2N1bWVudCBjb250ZW50",
+    "signature": "SWgkRzksmmUAIeyGE7H0KAC/3+TH9Y+mavXfxR+C0tO6GXtbSUFbBDf9kgGoprI+hWd/4CToQAkOEORZPJI6HqPzO3GupOs3H9MLflmep6WU1jAmIJNpa4/5K++XlfeUP6vIdcCI+huVNspK/9TCadeS2WeG7FGLwnMFrlV8kHoCtCG3f+vcEvhwav5eut7umcfOZmFsENFq1SvSvgdHm4k9Hz5u1pLW3ncU1b1wTJd2l5EerZK5n19m8dvUIBLOfTI9HItkujEuAm2l1k95nrbkvlDtBxQoTKd671szmRvUqDIWmJyOMmJ1UPsOnFEVehV7KhRy1OhiwiwH/5Jvpg==",
+    "valid": true
+}
+```
 
 
