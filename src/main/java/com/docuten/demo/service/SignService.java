@@ -109,7 +109,10 @@ public class SignService {
             signature.update(documentBytes);
 
             return signature.verify(signatureBytes);
-        } catch (InvalidKeyException | NoSuchAlgorithmException | SignatureException e) {
+        } catch (SignatureException e) {
+            logger.error(e.getMessage());
+            throw new InvalidSignatureException(e.getMessage());
+        } catch (InvalidKeyException | NoSuchAlgorithmException e) {
             logger.error(e.getMessage());
             throw new CryptographyException(e.getMessage());
         } catch (IllegalArgumentException e) {

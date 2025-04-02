@@ -54,9 +54,8 @@ public class SignServiceIntegrationTest {
 
     @Test
     public void testSignAndVerifyDocument_Success() throws UserNotFoundException, KeysNotFoundException, CryptographyException {
-        SignDto signDto = new SignDto();
-        signDto.setUserId(testUser.getId());
-        signDto.setDocumentBase64(Base64.getEncoder().encodeToString("Test document content".getBytes()));
+        String documentBase64 = Base64.getEncoder().encodeToString("Test document content".getBytes());
+        SignDto signDto = new SignDto(testUser.getId(), documentBase64);
 
         String signature = signService.signDocument(signDto);
         assertNotNull(signature);
@@ -68,9 +67,8 @@ public class SignServiceIntegrationTest {
 
     @Test
     public void testSignAndVerifyDocument_InvalidSignature() throws UserNotFoundException, KeysNotFoundException, CryptographyException {
-        SignDto signDto = new SignDto();
-        signDto.setUserId(testUser.getId());
-        signDto.setDocumentBase64(Base64.getEncoder().encodeToString("Test document content".getBytes()));
+        String documentBase64 = Base64.getEncoder().encodeToString("Test document content".getBytes());
+        SignDto signDto = new SignDto(testUser.getId(), documentBase64);
 
         String signature = signService.signDocument(signDto);
         assertNotNull(signature);

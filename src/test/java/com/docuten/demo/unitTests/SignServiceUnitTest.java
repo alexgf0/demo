@@ -1,10 +1,7 @@
 package com.docuten.demo.unitTests;
 
 import com.docuten.demo.DTO.SignDto;
-import com.docuten.demo.exceptions.ArgumentRequiredException;
-import com.docuten.demo.exceptions.CryptographyException;
-import com.docuten.demo.exceptions.KeysNotFoundException;
-import com.docuten.demo.exceptions.UserNotFoundException;
+import com.docuten.demo.exceptions.*;
 import com.docuten.demo.model.Keys;
 import com.docuten.demo.service.KeysService;
 import com.docuten.demo.service.SignService;
@@ -46,9 +43,7 @@ public class SignServiceUnitTest {
 
         userId = UUID.randomUUID();
 
-        signDto = new SignDto();
-        signDto.setUserId(userId);
-        signDto.setDocumentBase64(TEST_DOCUMENT_BASE64);
+        signDto = new SignDto(userId, TEST_DOCUMENT_BASE64);
     }
 
     @Test
@@ -78,6 +73,14 @@ public class SignServiceUnitTest {
 
         assertThrows(KeysNotFoundException.class, () -> signService.signDocument(signDto));
         verify(keysService, times(1)).get(userId);
+    }
+
+    @Test
+    public void testSignDocument_InvalidDocument() {
+        when(keysService.get(userId)).thenReturn(testKeys);
+        SignDto invalidSignDto = new SignDto(userId, TEST_DOCUMENT_BASE64+";"); // add invalid base64 char
+
+        assertThrows(InvalidDocumentException.class, () -> signService.signDocument(invalidSignDto));
     }
 
     @Test
@@ -115,7 +118,7 @@ public class SignServiceUnitTest {
 
         signDto.setDocumentSignature(Base64.getEncoder().encodeToString("invalid-signature".getBytes()));
 
-        CryptographyException exception = assertThrows(CryptographyException.class, () -> {
+        InvalidSignatureException exception = assertThrows(InvalidSignatureException.class, () -> {
             signService.verifySignature(signDto);
         });
 
@@ -141,5 +144,14 @@ public class SignServiceUnitTest {
 
         assertThrows(KeysNotFoundException.class, () -> signService.verifySignature(signDto));
         verify(keysService, times(1)).get(userId);
+    }
+
+    @Test
+    public void testVerifyDocument_InvalidDocument() {
+        when(keysService.get(userId)).thenReturn(testKeys);
+        SignDto invalidSignDto = new SignDto(userId, TEST_DOCUMENT_BASE64+";"); // add invalid base64 char
+        invalidSignDto.setDocumentSignature(VALID_SIGNATURE_BASE64);
+
+        assertThrows(InvalidDocumentException.class, () -> signService.signDocument(invalidSignDto));
     }
 }

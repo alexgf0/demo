@@ -4,7 +4,6 @@ import com.docuten.demo.DTO.ErrorDto;
 import com.docuten.demo.DTO.UserDto;
 import com.docuten.demo.exceptions.ArgumentRequiredException;
 import com.docuten.demo.exceptions.KeysNotFoundException;
-import com.docuten.demo.exceptions.UserIdNotProvidedException;
 import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.User;
 import com.docuten.demo.service.KeysService;
@@ -65,9 +64,6 @@ public class UserController {
             return ResponseEntity.ok(user);
         } catch (ArgumentRequiredException e) {
             logger.debug("Tried to update user without required values: " + e);
-            return new ResponseEntity<>(new ErrorDto(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
-        } catch (UserIdNotProvidedException e) {
-            logger.debug("Tried to update user without providing userId: " + e);
             return new ResponseEntity<>(new ErrorDto(HttpStatus.BAD_REQUEST, e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (UserNotFoundException e) {
             logger.debug("Tried to update not found user with userId: " + userDto.getId() + " - " + e);

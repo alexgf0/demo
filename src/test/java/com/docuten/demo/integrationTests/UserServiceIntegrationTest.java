@@ -1,7 +1,6 @@
 package com.docuten.demo.integrationTests;
 
 import com.docuten.demo.DTO.UserDto;
-import com.docuten.demo.exceptions.UserIdNotProvidedException;
 import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.User;
 import com.docuten.demo.repository.UserRepository;
@@ -53,7 +52,7 @@ public class UserServiceIntegrationTest {
     }
 
     @Test
-    public void testUpdateUser_Success() throws UserNotFoundException, UserIdNotProvidedException {
+    public void testUpdateUser_Success() throws UserNotFoundException {
         User savedUser = userRepository.save(new User("Fernando", "Alonso", "Díaz"));
 
         UserDto updatedUserDto = new UserDto();

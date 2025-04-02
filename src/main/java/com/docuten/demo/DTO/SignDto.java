@@ -11,6 +11,11 @@ public class SignDto {
 
     private String documentSignature;
 
+    public SignDto(UUID userId, String documentBase64) {
+        this.userId = userId;
+        this.documentBase64 = documentBase64;
+    }
+
     public void checkRequiredFields(boolean verifying) throws ArgumentRequiredException {
         if (documentBase64 == null) {
            throw new ArgumentRequiredException("the field documentBase64 is required");

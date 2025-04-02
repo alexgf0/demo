@@ -1,7 +1,6 @@
 package com.docuten.demo.unitTests;
 
 import com.docuten.demo.DTO.UserDto;
-import com.docuten.demo.exceptions.UserIdNotProvidedException;
 import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.User;
 import com.docuten.demo.repository.UserRepository;
@@ -78,7 +77,7 @@ public class UserServiceUnitTest {
     }
 
     @Test
-    public void testUpdateUser_Success() throws UserNotFoundException, UserIdNotProvidedException {
+    public void testUpdateUser_Success() throws UserNotFoundException {
         when(userRepository.findById(userId)).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -98,16 +97,6 @@ public class UserServiceUnitTest {
         assertThrows(UserNotFoundException.class, () -> userService.update(userDto));
 
         verify(userRepository, times(1)).findById(userId);
-        verify(userRepository, never()).save(any(User.class));
-    }
-
-    @Test
-    public void testUpdateUser_UserIdNotProvided() {
-        userDto.setId(null);
-
-        assertThrows(UserIdNotProvidedException.class, () -> userService.update(userDto));
-
-        verify(userRepository, never()).findById(any(UUID.class));
         verify(userRepository, never()).save(any(User.class));
     }
 

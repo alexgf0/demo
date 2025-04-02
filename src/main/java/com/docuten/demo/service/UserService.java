@@ -1,7 +1,6 @@
 package com.docuten.demo.service;
 
 import com.docuten.demo.DTO.UserDto;
-import com.docuten.demo.exceptions.UserIdNotProvidedException;
 import com.docuten.demo.exceptions.UserNotFoundException;
 import com.docuten.demo.model.User;
 import com.docuten.demo.repository.UserRepository;
@@ -38,10 +37,7 @@ public class UserService {
         return repository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
-    public User update(UserDto userDto) throws UserIdNotProvidedException, UserNotFoundException {
-        if (userDto.getId() == null) {
-            throw new UserIdNotProvidedException();
-        }
+    public User update(UserDto userDto) throws UserNotFoundException {
         repository.findById(userDto.getId()).orElseThrow(UserNotFoundException::new);
 
         return repository.save(new User(userDto.getId(), userDto.getName(), userDto.getFirstSurname(), userDto.getSecondSurname()));
